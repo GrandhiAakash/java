@@ -1,0 +1,64 @@
+import java.util.Random;
+
+public class TemperatureSensorSimulation {
+
+    public static void main(String[] args) {
+        // Create a Random object
+        Random random = new Random();
+
+        // Define the range of possible analog values (0-1023)
+        int minAnalogValue = 0;
+        int maxAnalogValue = 1023;
+
+        // Simulate reading analog values and converting them to temperature
+        for (int i = 0; i < 10; i++) { // Read 10 samples for demonstration
+            // Generate a random analog value
+            int analogValue = random.nextInt(maxAnalogValue - minAnalogValue + 1) + minAnalogValue;
+
+            // Convert the analog value to temperature in Celsius using TMP36's linear temperature conversion formula
+            double temperatureCelsius = (analogValue / 1023.0) * 3300; // 1023 is the maximum value of the ADC and 3300 is the voltage range
+            temperatureCelsius = (temperatureCelsius - 500) / 10; // TMP36's linear conversion formula
+
+            // Print the analog value and temperature in Celsius
+            System.out.printf("Analog Value: %d, Temperature: %.2f°C%n", analogValue, temperatureCelsius);
+        }
+    }
+}
+
+
+import com.pi4j.io.gpio.*;
+import com.pi4j.io.gpio.event.GpioPinAnalogValueChangeEvent;
+import com.pi4j.io.gpio.event.GpioPinListenerAnalog;
+
+public class TemperatureSensor {
+
+    public static void main(String[] args) throws InterruptedException {
+        // Create a GpioController
+        final GpioController gpio = GpioFactory.getInstance();
+
+        // Provision the GPIO pin as an analog input pin
+        final GpioPinAnalogInput analogInput = gpio.provisionAnalogInputPin(RaspiPin.GPIO_00);
+
+        // Create a listener for analog pin value changes
+        analogInput.addListener((GpioPinListenerAnalog) event -> {
+            // Read the analog value
+            double analogValue = event.getValue();
+
+            // Convert the analog value to temperature in Celsius using TMP36's linear temperature conversion formula
+            double temperatureCelsius = (analogValue / 1023.0) * 3300; // 1023 is the maximum value of the ADC and 3300 is the voltage range
+            temperatureCelsius = (temperatureCelsius - 500) / 10; // TMP36's linear conversion formula
+
+            // Print the temperature
+            System.out.printf("Analog Value: %.2f, Temperature: %.2f°C%n", analogValue, temperatureCelsius);
+        });
+
+        // Keep the program running until terminated
+        while (true) {
+            Thread.sleep(1000);
+        }
+    }
+}
+
+
+
+
