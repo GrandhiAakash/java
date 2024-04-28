@@ -1,0 +1,474 @@
+3.Implement MapReduce program that processes a weather dataset
+Procedure:
+ The code simulates weather data with random temperature and humidity values.
+ It defines map functions to categorize temperature and humidity data into key-value 
+pairs.
+ A reduce function aggregates the mapped data by summing up the values for each 
+key.
+ The MapReduce function combines mapping and reducing operations:
+ It maps the data using a specified mapper function.
+ It groups the mapped data by keys.
+ It reduces each group using a reducer function.
+ In the main execution:
+ Simulated weather data is generated.
+ MapReduce is performed separately for temperature and humidity.
+ The counts of temperature and humidity values are printed as output
+# 3
+import random
+from multiprocessing import Pool
+# Simulated weather data generator
+def generate_weather_data(num_records):
+    weather_data = []
+    for _ in range(num_records):
+        temperature = random.randint(-20, 40)
+        humidity = random.randint(0, 100)
+        weather_data.append((temperature, humidity))
+    return weather_data
+# Map function to process temperature data
+def map_temperature(data):
+    temperature, humidity = data
+    return temperature, 1
+# Map function to process humidity data
+def map_humidity(data):
+    temperature, humidity = data
+    return humidity, 1
+# Reduce function to aggregate counts
+def reduce_counts(data):
+    key, counts = data
+    return key, sum(counts)
+# MapReduce function
+def map_reduce(data, mapper, reducer):
+    mapped_data = [mapper(item) for item in data]
+    grouped_data = {}
+    for key, value in mapped_data:
+        grouped_data.setdefault(key, []).append(value)
+    reduced_data = [reducer((key, value)) for key, value in grouped_data.items()]
+    return reduced_data
+if __name__ == '__main__':
+    # Simulate weather dataset
+    weather_data = generate_weather_data(1000)
+    # Run MapReduce for temperature
+    temperature_counts = map_reduce(weather_data, map_temperature, reduce_counts)
+    print("Temperature counts:")
+    print(temperature_counts)
+    # Run MapReduce for humidity
+    humidity_counts = map_reduce(weather_data, map_humidity, reduce_counts)
+    print("Humidity counts:")
+    print(humidity_counts)
+
+
+4. Collect sensor data from any real time application and apply preprocessing techniques 
+Procedure:
+Preprocessing sensor data is a crucial step in preparing it for further analysis or machine 
+learning. Let’s walk through the process using Python:
+1. Import Necessary Libraries: First, import the required libraries such as Pandas, 
+NumPy, and Scikit-Learn. These will help you manipulate and preprocess the data 
+effectively
+2. Python
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import MinMaxScaler
+import seaborn as sns
+import matplotlib.pyplot as plt
+3. Load the Dataset: Load your sensor data into a Pandas DataFrame. For example, if 
+you have a CSV file, you can read it like this:
+Python
+df = pd.read_csv('path/to/your/sensor_data.csv')
+print(df.head())
+This will display the first few rows of your dataset.
+4. Data Cleaning and Preprocessing:
+o Handle missing values: Identify and handle any missing data (e.g., replace 
+with mean, median, or drop rows/columns).
+o Remove irrelevant columns: Drop any columns that aren’t useful for your 
+analysis.
+o Convert data types: Ensure that data types are appropriate for each feature 
+(e.g., numeric, categorical).
+5. Feature Scaling: Normalize or standardize your features to bring them to a similar 
+scale. For example, use Min-Max scaling:
+18
+6. Exploratory Data Analysis (EDA): Visualize your data using libraries like Seaborn 
+and Matplotlib. Explore relationships between features and identify outliers.
+7. Feature Engineering: Create new features if needed. For instance, derive additional 
+features from existing ones (e.g., ratios, averages).
+8. Handling Categorical Variables: If your data contains categorical variables, encode 
+them.
+9. Split Data into Training and Test Sets: Divide your dataset into training and test 
+subsets for model evaluation. 
+# 4
+import random
+# Function to generate a simple weather dataset
+def generate_weather_data(num_records):
+    weather_data = []
+    for _ in range(num_records):
+        temperature = random.randint(-20, 40)  # Temperature in Celsius
+        humidity = random.randint(0, 100)      # Humidity in percentage
+        weather_data.append((temperature, humidity))
+    return weather_data
+# Function to apply preprocessing techniques
+def preprocess(data):
+    preprocessed_data = []
+    for temperature, humidity in data:
+        # Example preprocessing: Filtering out temperatures below 0
+        if temperature >= 0:
+            humidity_normalized = humidity / 100.0
+            preprocessed_data.append((temperature, humidity_normalized))
+    return preprocessed_data
+if __name__ == '__main__':
+    # Generate a simple weather dataset
+    weather_data = generate_weather_data(1000)
+    # Apply preprocessing techniques
+    preprocessed_data = preprocess(weather_data)
+    # Print preprocessed data
+    print("Preprocessed Weather Data:")
+    for temperature, humidity in preprocessed_data:
+        print(f"Temperature: {temperature}°C, Humidity: {humidity}")
+
+
+
+5. Collect sensor data and do Prediction using linear regression 
+Procedure:
+ We load the weather dataset using pd.read_csv() from pandas.
+ We extract the humidity as the feature (X) and temperature as the target variable (y).
+ We split the dataset into training and testing sets using train_test_split from scikitlearn.
+ We produce relationship between one or more variables using Linear Regression.
+ We train a model using a linear regression.
+ We use the trained model to make predictions on the test data.
+ Finally, we plot the actual vs. predicted values to visualize the performance of the 
+Linear regression model 
+# 5
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+# Load weather dataset
+Electriccar_data = pd.read_csv('/content/ElectricCarData_Clean.csv')
+# Extract features (humidity) and target variable (temperature)
+X = Electriccar_data[['PriceEuro']]
+y = Electriccar_data['Range_Km']
+# Split dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Train linear regression model
+lin_reg = LinearRegression()
+lin_reg.fit(X_train, y_train)
+y_pred = lin_reg.predict(X_test)
+plt.scatter(X_test, y_test, color='blue', label='Actual')
+plt.plot(X_test, y_pred, color='red', label='Predicted')
+plt.xlabel('PriceEuro')
+plt.ylabel('Range_Km')
+plt.title('Linear Regression: Actual vs. Predicted')
+plt.legend()
+plt.show()
+
+
+6. Collect sensor data and Implement Support Vector Machine  
+Procedure:
+ We load the weather dataset using pd.read_csv() from pandas.
+ We extract the humidity as the feature (X) and temperature as the target variable (y).
+ We split the dataset into training and testing sets using train_test_split from scikitlearn.
+ We standardize the features using StandardScaler to ensure that each feature has a 
+mean of 0 and a standard deviation of 1.
+ We train a Support Vector Machine (SVM) model with a linear kernel 
+(kernel='linear').
+ We use the trained model to make predictions on the test data.
+ Finally, we plot the actual vs. predicted values to visualize the performance of the 
+SVM model
+# 6
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVR
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+# Load weather dataset
+Electriccar_data = pd.read_csv('/content/ElectricCarData_Clean.csv')
+# Extract features (humidity) and target variable (temperature)
+X = Electriccar_data[['PriceEuro']]
+y = Electriccar_data['Range_Km']
+# Split dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Standardize features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+# Train Support Vector Machine (SVM) model
+svm_model = SVR(kernel='linear')  # Linear kernel
+svm_model.fit(X_train_scaled, y_train)
+# Make predictions
+y_pred = svm_model.predict(X_test_scaled)
+# Plot the actual vs. predicted values
+plt.scatter(X_test, y_test, color='blue', label='Actual')
+plt.scatter(X_test, y_pred, color='red', label='Predicted')
+plt.xlabel('PriceEuro')
+plt.ylabel('Range_Km')
+plt.title('Support Vector Machine: Actual vs. Predicted')
+plt.legend()
+plt.show()
+
+
+
+
+7. Collect sensor data and Implement Decision tree classification technique 
+Procedure:
+ We load the weather dataset using pd.read_csv() from pandas.
+ We define the features (X) as 'Temperature' and 'Humidity', and the target variable 
+(y) as 'Weather'.
+ We split the dataset into training and testing sets using train_test_split from scikitlearn.
+ We train a Decision Tree classifier using DecisionTreeClassifier.
+ We make predictions on the test data using the trained model.
+ We evaluate the model's performance using accuracy, classification report, and 
+confusion matrix. 
+# 7
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+# Load weather dataset
+Electriccar_data = pd.read_csv('/content/ElectricCarData_Clean.csv')
+# Define features (X) and target variable (y)
+X = Electriccar_data[['PriceEuro', 'Range_Km']]
+y = Electriccar_data['Brand']
+# Split dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Train Decision Tree classifier
+dt_classifier = DecisionTreeClassifier(random_state=42)
+dt_classifier.fit(X_train, y_train)
+# Make predictions
+y_pred = dt_classifier.predict(X_test)
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print("Accuracy:", accuracy)
+# Display classification report
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+# Display confusion matrix
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+
+8. Collect sensor data and Implement clustering algorithm
+Procedure:
+ We load the weather dataset using pd.read_csv().
+ We select features such as temperature and humidity.
+ We standardize the features using StandardScaler to ensure that each feature has a 
+mean of 0 and a standard deviation of 1.
+ We use the Elbow method to determine the optimal number of clusters.
+ Based on the Elbow method, we choose the optimal number of clusters.
+ We apply KMeans clustering with the chosen number of clusters.
+ We add cluster labels to the dataset.
+ Finally, we plot the clusters and centroids using matplotlib.  
+# 8
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+# Load weather dataset
+Electriccar_data = pd.read_csv('/content/ElectricCarData_Clean.csv')
+# Select features (e.g., Temperature and Humidity)
+X = Electriccar_data[['PriceEuro', 'Range_Km']]
+# Standardize the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+# Determine the optimal number of clusters using the Elbow method
+inertia = []
+for n_clusters in range(1, 11):
+    kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+    kmeans.fit(X_scaled)
+    inertia.append(kmeans.inertia_)
+# Plot the Elbow method to determine the optimal number of clusters
+plt.plot(range(1, 11), inertia, marker='o')
+plt.xlabel('Number of Clusters')
+plt.ylabel('Inertia')
+plt.title('Elbow Method for Optimal K')
+plt.show()
+# Based on the Elbow method, let's choose the optimal number of clusters (e.g., 3 or 4)
+# Apply KMeans clustering
+n_clusters = 3
+kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+kmeans.fit(X_scaled)
+labels = kmeans.labels_
+centers = kmeans.cluster_centers_
+# Add cluster labels to the dataset
+Electriccar_data['Cluster'] = labels
+# Plot the clusters
+plt.figure(figsize=(8, 6))
+for cluster in range(n_clusters):
+    cluster_data = Electriccar_data[Electriccar_data['Cluster'] == cluster]
+    plt.scatter(cluster_data['PriceEuro'], cluster_data['Range_Km'], label=f'Cluster {cluster}')
+plt.scatter(centers[:, 0], centers[:, 1], color='black', marker='x', label='Centroids')
+plt.xlabel('PriceEuro')
+plt.ylabel('Range_Km')
+plt.title('Clustering of Electric_car Data')
+plt.legend()
+plt.show()
+
+
+9. Visualize data using visualization techniques  
+Procedure:
+ We load the weather dataset using pd.read_csv() from pandas.
+ We display the first few rows of the dataset and summary statistics of numerical 
+variables using head() and describe() functions, respectively.
+ We visualize the distribution of temperature and humidity using histograms.
+ We create a scatter plot of temperature vs. humidity to explore their relationship.
+ We plot box plots to visualize the distribution of temperature for different weather 
+conditions.
+ We use a pairplot to visualize pairwise relationships between different variables in 
+the dataset
+# 9
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+# Load weather dataset
+Electriccar_data = pd.read_csv('/content/ElectricCarData_Clean.csv')
+# Display the first few rows of the dataset
+print("First few rows of the dataset:")
+print(Electriccar_data.head())
+# Summary statistics of numerical variables
+print("\nSummary statistics of numerical variables:")
+print(Electriccar_data.describe())
+# Histogram of temperature distribution
+plt.figure(figsize=(8, 6))
+sns.histplot(Electriccar_data['PriceEuro'], bins=20, kde=True, color='blue')
+plt.xlabel('PriceEuro')
+plt.ylabel('Frequency')
+plt.title('PriceEuro Distribution')
+plt.show()
+# Histogram of humidity distribution
+plt.figure(figsize=(8, 6))
+sns.histplot(Electriccar_data['Range_Km'], bins=20, kde=True, color='green')
+plt.xlabel('Range_Km')
+plt.ylabel('Frequency')
+plt.title('Range_Km Distribution')
+plt.show()
+# Scatter plot of temperature vs. humidity
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x='PriceEuro', y='Range_Km', data=Electriccar_data, color='red')
+plt.xlabel('PriceEuro')
+plt.ylabel('Range_Km')
+plt.title('PriceEuro vs. Range_Km')
+plt.show()
+# Box plot of temperature by weather condition
+plt.figure(figsize=(10, 6))
+sns.boxplot(x='Brand', y='Range_Km', data=Electriccar_data)
+plt.xlabel('Electric car Condition')
+plt.ylabel('Range_Km')
+plt.title('Range_Km by Electric car Condition')
+plt.show()
+# Pairplot to visualize pairwise relationships
+sns.pairplot(Electriccar_data, diag_kind='kde')
+plt.suptitle('Pairwise Relationships')
+plt.show()
+
+
+10. Model Time series data
+Procedure:
+Modeling time series data involves analyzing and forecasting data points based on their 
+temporal order. One popular method for time series forecasting is using Autoregressive 
+Integrated Moving Average (ARIMA) models.
+ We load the time series data from a CSV file using pd.read_csv() from pandas.
+ We convert the 'Date' column to datetime format and set it as the index of the 
+DataFrame.
+ We plot the time series data to visualize its pattern and trends.
+ We plot autocorrelation and partial autocorrelation plots to determine the appropriate 
+parameters for the ARIMA model.
+ We fit an ARIMA model to the time series data using the specified order (p, d, q).
+ We print the summary of the ARIMA model to examine its coefficients and statistical 
+information.
+ We plot the residuals of the model to check for any patterns or trends.
+ We forecast future values using the trained ARIMA model and plot the original data 
+along with the forecasted values.
+# 10
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+# Load time series data
+data = pd.read_csv('/content/ElectricCarData_Clean_1.csv')
+# Convert the 'Date' column to datetime format and set it as the index
+data['Date'] = pd.to_datetime(data['Date'] + ' ' + data['Time'])
+data.set_index('Date', inplace=True)
+# Choose the 'Temperature' column as the time series data
+time_series_data = data['TopSpeed_KmH']
+# Plot the time series data
+plt.figure(figsize=(10, 6))
+plt.plot(time_series_data)
+plt.title(' Time Series Data')
+plt.xlabel('Date')
+plt.ylabel('TopSpeed_KmH')
+plt.show()
+# Plot autocorrelation and partial autocorrelation plots
+plt.figure(figsize=(14, 5))
+plt.subplot(1, 2, 1)
+plot_acf(time_series_data, lags=30, ax=plt.gca())
+plt.title('Autocorrelation Plot')
+plt.subplot(1, 2, 2)
+plot_pacf(time_series_data, lags=30, ax=plt.gca())
+plt.title('Partial Autocorrelation Plot')
+plt.show()
+# Fit ARIMA model
+order = (2, 1, 1)  # (p, d, q)
+model = ARIMA(time_series_data, order=order)
+result = model.fit()
+# Print model summary
+print(result.summary())
+# Plot model residuals
+plt.figure(figsize=(10, 6))
+plt.plot(result.resid)
+plt.title('Model Residuals')
+plt.xlabel('Date')
+plt.ylabel('TopSpeed_KmH Residuals')
+plt.show()
+# Forecast future values
+forecast_steps = 12  # Number of steps to forecast
+forecast = result.forecast(steps=forecast_steps)
+# #Plot original data and forecasted values
+plt.figure(figsize=(10, 6))
+plt.plot(time_series_data, label='Original Data')
+plt.plot(np.arange(len(time_series_data), len(time_series_data) + forecast_steps), forecast, label='Forecasted Values', linestyle='--')
+plt.title('Original Data vs Forecasted Values')
+plt.xlabel('Date')
+plt.ylabel('Value')
+plt.legend()
+plt.show()
+
+
+12. Implement an application for predicting air pollution level using gas sensors.
+Procedure:
+Step 1: Prepare Your Environment
+First, ensure you have the necessary libraries installed. If not, install them using pip:
+pip install numpy pandas scikit-learn matplotlib
+Step 2: Sample Dataset
+Imagine we have a CSV file named air_quality.csv with sensor readings for CO, NO2, 
+and O3, alongside the target variable PM2.5 (particulate matter size 2.5 which is a 
+common measure for air pollution levels).  
+# 12
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+import numpy as np
+import matplotlib.pyplot as plt
+# Load the dataset
+df = pd.read_csv('/content/ElectricCarData_Clean.csv')
+# Select features and target
+X = df[['AccelSec', 'PriceEuro', 'Range_Km']]  # Features: Sensor readings
+y = df['Efficiency_WhKm']  # Target: PM2.5 levels
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Initialize and train the linear regression model
+model = LinearRegression()
+model.fit(X_train, y_train)
+# Make predictions
+y_pred = model.predict(X_test)
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+print(f"Mean Squared Error: {mse}")
+print(f"Root Mean Squared Error: {rmse}")
+# Plotting actual vs. predicted values
+plt.scatter(y_test, y_pred)
+plt.xlabel("Actual Efficiency_WhKm")
+plt.ylabel("Predicted Efficiency_WhKm")
+plt.title("Actual vs Predicted Efficiency_WhKm Levels")
+plt.show()
+
